@@ -1,0 +1,13 @@
+// ES5に変換する対象を指定するファイル
+{
+  "presets": [[
+    "env", {
+      "targets": {
+        "browsers": [
+          "last 5 versions",
+          "ie >= 8"
+        ]
+      }
+    }
+  ]]
+}
