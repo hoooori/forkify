@@ -1,9 +1,19 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/js/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist/js'), //必ず絶対パスで指定すること
-    filename: 'bundle.js'
-  }
+    path: path.resolve(__dirname, 'dist'), //必ず絶対パスで指定すること
+    filename: 'js/bundle.js'
+  },
+  devServer: {
+    contentBase: './dist'
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: './src/index.html'
+    })
+  ]
 };
