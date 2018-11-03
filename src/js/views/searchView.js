@@ -7,7 +7,8 @@ export const clearInput = () => {
 };
 
 export const clearResults = () => {
-  elements.searchResultList.innerHTML = '';
+  elements.searchResultList.innerHTML  = '';
+  elements.searchResultPages.innerHTML = '';
 };
 
 const limitRecipeTitle = (title, limit = 17) => {
@@ -16,16 +17,12 @@ const limitRecipeTitle = (title, limit = 17) => {
     title.split(' ').reduce((acc, cur) => { // acc: accumulator / cur: current
       if (acc + cur.length <= limit) { newTitle.push(cur); }
       return acc + cur.length;
-    });
+    }, 0); // ←このゼロはaccumulatorの最初の初期値
     return `${newTitle.join(' ')}...`; // return the result
   }
   return title;
 };
 
-export const renderResults = recipes => {
-  // renderRecipeをfor文で実行
-  recipes.forEach(renderRecipe);
-};
 
 const renderRecipe = recipe => {
   const markup = `
@@ -42,4 +39,40 @@ const renderRecipe = recipe => {
     </li>
   `;
   elements.searchResultList.insertAdjacentHTML('beforeend', markup); //insertAdjacentHTMLは繰り返しviewを生成するのに便利
-}
+};
+
+// ページネーションボタンのmarkup生成 type: prev or next
+const createButton = (page, type) => `
+  <button class="btn-inline results__btn--${type}" data-goto=${type === 'prev' ? page - 1 : page + 1}>
+    <span>Page ${type === 'prev' ? page - 1 : page + 1}</span>
+    <svg class="search__icon">
+      <use href="img/icons.svg#icon-triangle-${type === 'prev' ? 'left' : 'right'}"></use>
+    </svg>
+  </button>
+`;
+
+const renderButtons = (page, numResults, resultPerPage) => {
+  const pages = Math.ceil(numResults / resultPerPage); //繰り上げ
+  let button;
+  if(page === 1 && pages > 1) { // 最初のページはnextのみ
+    button = createButton(page, 'next');
+  } else if(page < pages) { //途中のページはnext, back
+    button = `
+      ${button = createButton(page, 'prev')}
+      ${button = createButton(page, 'next')}
+    `;
+  } else if(page === pages && pages > 1) { // 最後のページはbackのみ
+    button = createButton(page, 'prev');
+  }
+  elements.searchResultPages.insertAdjacentHTML('afterbegin', button);
+};
+
+// ページネーションに合わせたデータの表示
+export const renderResults = (recipes, page = 1, resultPerPage = 10) => {
+  const start = (page - 1) * resultPerPage;
+  const end   = page * resultPerPage;
+  recipes.slice(start, end).forEach(renderRecipe); // renderRecipeをfor文で実行
+
+  // ページネーションボタンの表示
+  renderButtons(page, recipes.length, resultPerPage);
+};
