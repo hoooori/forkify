@@ -17,10 +17,10 @@ const limitRecipeTitle = (title, limit = 17) => {
       if (acc + cur.length <= limit) { newTitle.push(cur); }
       return acc + cur.length;
     });
-    return `${newTitle.join(' ')}...` // return the result
+    return `${newTitle.join(' ')}...`; // return the result
   }
   return title;
-}
+};
 
 export const renderResults = recipes => {
   // renderRecipeをfor文で実行
