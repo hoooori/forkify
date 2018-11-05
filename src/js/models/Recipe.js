@@ -32,4 +32,57 @@ export default class Recipe {
   calcServings() {
     this.servings = 4;
   }
+
+  parseIngredients() {
+    const unitsLong  = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds']; // 材料単位
+    const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound']; // 材料単位(省略したもの)
+
+    // 材料リストをmapで処理
+    const newIngredients = this.ingredients.map(el => {
+      let ingredient = el.toLowerCase(); // 材料を小文字に変換
+
+      unitsLong.forEach((unit, i) => {
+        ingredient = ingredient.replace(unit, unitsShort[i]); // ingredientと同じunitを見つけらたら、ingredientを単位省略版に置き換える
+      });
+
+      ingredient      = ingredient.replace(/ *\([^)]*\) */g, ' '); // 文字列から括弧を取り除く
+      const arrIng    = ingredient.split(' ');
+      const unitIndex = arrIng.findIndex(targetElement => unitsShort.includes(targetElement)); // 材料の配列から"材料の単位"が含まれる配列の要素番号を取得
+
+      let objIng;
+      if(unitIndex > -1) { // 単位を含む場合
+        // 例1:「4 1/2 cups」の場合、arrCountは「[4, 1/2]」
+        // 例2:「4 cups」の場合、arrCountは「4」
+        const arrCount = arrIng.slice(0, unitIndex);
+        let count;
+        if(arrCount.length === 1) {
+          count = eval(arrIng[0].replace('-', '+')); // 「4-1/2」といった表記を「4+1/2」に変換してevalで計算
+        } else {
+          count = eval(arrIng.slice(0, unitIndex).join('+')); // 「4+1/2」といった計算式を評価する
+        }
+
+        objIng = {
+          count,
+          unit:       arrIng[unitIndex],
+          ingredient: arrIng.slice(unitIndex + 1).join(' ')
+        }
+
+      } else if(parseInt(arrIng[0], 10)) { // 単位を含まず、最初の要素が数字の場合
+        objIng = {
+          count:      parseInt(arrIng[0], 10),
+          unit:       '',
+          ingredient: arrIng.slice(1).join(' ')
+        }
+      } else if(unitIndex === -1) { // 単位を含まず、最初の要素も数字じゃない場合
+        objIng = {
+          count: 1,
+          unit:  '',
+          ingredient
+          // 「ingredient: ingredient」と一緒
+        }
+      }
+      return objIng;
+    });
+    this.ingredients = newIngredients;
+  }
 }

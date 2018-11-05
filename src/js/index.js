@@ -52,9 +52,10 @@ const controlRecipe = async() => {
 
   if(id) {
     state.recipe = new Recipe(id); // recipe idを引数にrecipeオブジェクトを生成
-
     try {
       await state.recipe.getRecipe(); // レシピの詳細を取得
+      console.log(state.recipe.ingredients);
+      state.recipe.parseIngredients(); // 材料の量を取得
       state.recipe.calcTime(); // 調理時間を算出
       state.recipe.calcServings(); // 材料の分量を算出
       console.log(state.recipe);
