@@ -1,22 +1,29 @@
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
 
-const controlSearch = async () => {
-  const query = searchView.getInput(); // 1. viewからqueryを取得
-  if(query) {
-    state.search = new Search(query); // 2. searchオブジェクトを作成し、stateに保持
+/****************************** Searchコントローラ ******************************/
+const controlSearch = async() => {
+  const query = searchView.getInput(); // viewからqueryを取得
 
-    searchView.clearInput(); // 3. 次の検索の為に入力フォームをリセット
-    searchView.clearResults(); // 4. 検索結果を空にする
+  if(query) {
+    state.search = new Search(query); // searchオブジェクトを作成し、stateに保持
+    searchView.clearInput(); // 次の検索の為に入力フォームをリセット
+    searchView.clearResults(); // 検索結果を空にする
     renderLoader(elements.searchResult); // ローダーを表示
 
-    await state.search.getResults(); // 5. レシピを検索
-
-    clearLoader(); // ローダーを削除
-    searchView.renderResults(state.search.result); // 5. 検索結果を表示
+    try {
+      await state.search.getResults(); // レシピを検索
+      clearLoader(); // ローダーを削除
+      searchView.renderResults(state.search.result); // 5. 検索結果を表示
+    } catch(error) {
+      alert(error);
+      throw new Error(error);
+      clearLoader(); // ローダーを削除
+    }
   }
 };
 
@@ -37,3 +44,26 @@ elements.searchResultPages.addEventListener('click', e => {
     console.log(goToPage);
   }
 });
+/****************************** Searchコントローラ ******************************/
+
+/****************************** Recipeコントローラ ******************************/
+const controlRecipe = async() => {
+  const id = window.location.hash.replace('#', ''); // urlからrecipe idを取得
+
+  if(id) {
+    state.recipe = new Recipe(id); // recipe idを引数にrecipeオブジェクトを生成
+
+    try {
+      await state.recipe.getRecipe(); // レシピの詳細を取得
+      state.recipe.calcTime(); // 調理時間を算出
+      state.recipe.calcServings(); // 材料の分量を算出
+      console.log(state.recipe);
+    } catch(error) {
+      alert(error);
+      throw new Error(error);
+    }
+  }
+};
+
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe)); //urlの#recipe_idが変化した時, 画面をロードした時にrecipe_idを取得するイベントリスナ
+/****************************** Recipeコントローラ ******************************/
