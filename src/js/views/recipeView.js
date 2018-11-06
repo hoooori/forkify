@@ -63,12 +63,12 @@ export const renderRecipe = recipe => {
         <span class="recipe__info-text"> servings</span>
 
         <div class="recipe__info-buttons">
-          <button class="btn-tiny">
+          <button class="btn-tiny btn-decrease">
             <svg>
               <use href="img/icons.svg#icon-circle-with-minus"></use>
             </svg>
           </button>
-          <button class="btn-tiny">
+          <button class="btn-tiny btn-increase">
             <svg>
               <use href="img/icons.svg#icon-circle-with-plus"></use>
             </svg>
@@ -111,4 +111,14 @@ export const renderRecipe = recipe => {
     </div>
   `;
   elements.recipe.insertAdjacentHTML('afterbegin', markup);
+};
+
+// 食数の変更を再レンダリング
+export const updateServingsIngredients = recipe => {
+  document.querySelector('.recipe__info-data--people').textContent = recipe.servings; // 材料の食数を更新
+
+  const countElements = Array.from(document.querySelectorAll('.recipe__count')); // 材料を表示する要素を配列で取得
+  countElements.forEach((el, i) => { // 要素をfor文で回し、各食材の量を最適化したものをtextContentに格納
+    el.textContent = formatCount(recipe.ingredients[i].count);
+  });
 };

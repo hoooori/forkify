@@ -74,4 +74,18 @@ const controlRecipe = async() => {
 };
 
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe)); //urlの#recipe_idが変化した時, 画面をロードした時にrecipe_idを取得するイベントリスナ
+
+// 材料増減ボタンをクリックした際の処理
+elements.recipe.addEventListener('click', e => {
+  if(e.target.matches('.btn-decrease, .btn-decrease *')){ // btn-decreaseエレメントとbtn-decreaseエレメントの子エレメントにマッチした場合
+    if(state.recipe.servings > 1) { // 食数が1より大きい場合のみ食数を減らせる
+      state.recipe.updateServings('dec');
+      recipeView.updateServingsIngredients(state.recipe); // 材料を再レンダリング
+    }
+  } else if(e.target.matches('.btn-increase, .btn-increase *')){
+    state.recipe.updateServings('inc');
+    recipeView.updateServingsIngredients(state.recipe); // 材料を再レンダリング
+  }
+  console.log(state.recipe);
+});
 /****************************** Recipeコントローラ ******************************/
