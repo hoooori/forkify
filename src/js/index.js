@@ -1,6 +1,7 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
+import * as recipeView from './views/recipeView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
@@ -51,6 +52,8 @@ const controlRecipe = async() => {
   const id = window.location.hash.replace('#', ''); // urlからrecipe idを取得
 
   if(id) {
+    recipeView.clearRecipe();
+    renderLoader(elements.recipe); //ローディングアイコン表示
     state.recipe = new Recipe(id); // recipe idを引数にrecipeオブジェクトを生成
     try {
       await state.recipe.getRecipe(); // レシピの詳細を取得
@@ -58,7 +61,8 @@ const controlRecipe = async() => {
       state.recipe.parseIngredients(); // 材料の量を取得
       state.recipe.calcTime(); // 調理時間を算出
       state.recipe.calcServings(); // 材料の分量を算出
-      console.log(state.recipe);
+      clearLoader(); // ローディングアイコン非表示
+      recipeView.renderRecipe(state.recipe); // レシピの詳細を表示
     } catch(error) {
       alert(error);
       throw new Error(error);

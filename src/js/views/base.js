@@ -3,7 +3,8 @@ export const elements = {
   searchInput:       document.querySelector('.search__field'),
   searchResult:      document.querySelector('.results'), // ローディングアイコン
   searchResultList:  document.querySelector('.results__list'), // 検索結果
-  searchResultPages: document.querySelector('.results__pages') // ページネーション
+  searchResultPages: document.querySelector('.results__pages'), // ページネーション
+  recipe:            document.querySelector('.recipe') // レシピ詳細画面のローディングアイコン
 };
 
 export const elementStrings = {

@@ -36,6 +36,7 @@ export default class Recipe {
   parseIngredients() {
     const unitsLong  = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds']; // 材料単位
     const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound']; // 材料単位(省略したもの)
+    const units      = [...unitsShort, 'kg', 'g']; // unitsShort配列にkg, gを追加した配列
 
     // 材料リストをmapで処理
     const newIngredients = this.ingredients.map(el => {
@@ -47,7 +48,7 @@ export default class Recipe {
 
       ingredient      = ingredient.replace(/ *\([^)]*\) */g, ' '); // 文字列から括弧を取り除く
       const arrIng    = ingredient.split(' ');
-      const unitIndex = arrIng.findIndex(targetElement => unitsShort.includes(targetElement)); // 材料の配列から"材料の単位"が含まれる配列の要素番号を取得
+      const unitIndex = arrIng.findIndex(targetElement => units.includes(targetElement)); // 材料の配列から"材料の単位"が含まれる配列の要素番号を取得
 
       let objIng;
       if(unitIndex > -1) { // 単位を含む場合
