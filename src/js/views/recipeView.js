@@ -1,7 +1,27 @@
 import { elements } from './base';
+import { Fraction } from 'fractional';
 
 export const clearRecipe = () => {
   elements.recipe.innerHTML = '';
+};
+
+// 材料の量を数字と分数で返す
+const formatCount = count => {
+  if(count) {
+    // 2.5 => 2 1/2 | 0.5 => 1/2
+    const [int, dec] = count.toString().split('.').map(el => parseInt(el, 10)); // 数字と分数に切り分け
+
+    if(!dec) return count; // 分数がない場合
+
+    if(int === 0) { // 数字が0の場合
+      const fr = new Fraction(count);
+      return `${fr.numerator}/${fr.denominator}`; // 与えられた数字を分数にして返す
+    } else { // 数字が0より大きい場合
+      const fr = new Fraction(count - int); // 元の数字から切り分けられた数字を引く (例：2.5 → 2.5 - 2 = 0.5)
+      return `${int} ${fr.numerator}/${fr.denominator}` // 残った数字を分数にして返す
+    }
+  }
+  return '?';
 };
 
 // 材料リストをレンダリング
@@ -10,7 +30,7 @@ const createIngredient = ingredient => `
     <svg class="recipe__icon">
       <use href="img/icons.svg#icon-check"></use>
     </svg>
-    <div class="recipe__count">${ingredient.count}</div>
+    <div class="recipe__count">${formatCount(ingredient.count)}</div>
     <div class="recipe__ingredient">
       <span class="recipe__unit">${ingredient.unit}</span>
       ${ingredient.ingredient}

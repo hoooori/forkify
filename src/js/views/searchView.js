@@ -11,6 +11,15 @@ export const clearResults = () => {
   elements.searchResultPages.innerHTML = '';
 };
 
+// 閲覧中のレシピ(左側のリスト)にactiveクラスを付与
+export const highlightSelected = id => {
+  const resultsArr = Array.from(document.querySelectorAll('.results__link'));
+  resultsArr.forEach(el => {
+    el.classList.remove('results__link--active');
+  });
+  document.querySelector(`a[href="#${id}"]`).classList.add('results__link--active');
+};
+
 const limitRecipeTitle = (title, limit = 17) => {
   const newTitle = [];
   if(title.length > limit) {
@@ -22,7 +31,6 @@ const limitRecipeTitle = (title, limit = 17) => {
   }
   return title;
 };
-
 
 const renderRecipe = recipe => {
   const markup = `

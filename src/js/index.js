@@ -52,8 +52,11 @@ const controlRecipe = async() => {
   const id = window.location.hash.replace('#', ''); // urlからrecipe idを取得
 
   if(id) {
-    recipeView.clearRecipe();
+    recipeView.clearRecipe(); //レシピ詳細画面を空にする
     renderLoader(elements.recipe); //ローディングアイコン表示
+
+    searchView.highlightSelected(id); // 左側のリストの中から閲覧中のレシピをハイライト
+
     state.recipe = new Recipe(id); // recipe idを引数にrecipeオブジェクトを生成
     try {
       await state.recipe.getRecipe(); // レシピの詳細を取得
