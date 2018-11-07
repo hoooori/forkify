@@ -9,7 +9,6 @@ import * as likesView  from './views/likesView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
-window.state = state;
 
 /****************************** Searchコントローラ ******************************/
 const controlSearch = async() => {
@@ -160,5 +159,3 @@ elements.recipe.addEventListener('click', e => {
     controlLike();
   }
 });
-
-

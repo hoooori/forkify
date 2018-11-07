@@ -9,7 +9,8 @@ export const clearRecipe = () => {
 const formatCount = count => {
   if(count) {
     // 2.5 => 2 1/2 | 0.5 => 1/2
-    const [int, dec] = count.toString().split('.').map(el => parseInt(el, 10)); // 数字と分数に切り分け
+    const newCount = Math.round(count * 10000) / 10000;
+    const [int, dec] = newCount.toString().split('.').map(el => parseInt(el, 10)); // 数字と分数に切り分け
 
     if(!dec) return count; // 分数がない場合
 
