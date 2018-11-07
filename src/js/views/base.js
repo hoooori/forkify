@@ -4,7 +4,8 @@ export const elements = {
   searchResult:      document.querySelector('.results'), // ローディングアイコン
   searchResultList:  document.querySelector('.results__list'), // 検索結果
   searchResultPages: document.querySelector('.results__pages'), // ページネーション
-  recipe:            document.querySelector('.recipe') // レシピ詳細画面のローディングアイコン
+  recipe:            document.querySelector('.recipe'), // レシピ詳細画面のローディングアイコン
+  shopping:          document.querySelector('.shopping__list') // ショッピングリスト
 };
 
 export const elementStrings = {

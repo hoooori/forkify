@@ -1,10 +1,13 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import List   from './models/List';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
+import * as listView   from './views/listView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
+window.state = state;
 
 /****************************** Searchコントローラ ******************************/
 const controlSearch = async() => {
@@ -47,6 +50,8 @@ elements.searchResultPages.addEventListener('click', e => {
 });
 /****************************** Searchコントローラ ******************************/
 
+
+
 /****************************** Recipeコントローラ ******************************/
 const controlRecipe = async() => {
   const id = window.location.hash.replace('#', ''); // urlからrecipe idを取得
@@ -60,7 +65,6 @@ const controlRecipe = async() => {
     state.recipe = new Recipe(id); // recipe idを引数にrecipeオブジェクトを生成
     try {
       await state.recipe.getRecipe(); // レシピの詳細を取得
-      console.log(state.recipe.ingredients);
       state.recipe.parseIngredients(); // 材料の量を取得
       state.recipe.calcTime(); // 調理時間を算出
       state.recipe.calcServings(); // 材料の分量を算出
@@ -72,6 +76,30 @@ const controlRecipe = async() => {
     }
   }
 };
+/****************************** Recipeコントローラ ******************************/
+
+
+/****************************** List(shopping)コントローラ ******************************/
+const controlList = () => {
+  if(!state.list) state.list = new List(); // リストがない場合、Listオブジェクトを生成
+  state.recipe.ingredients.forEach(el => { // 材料の配列をショッピングリストに追加
+    const item = state.list.addItem(el.count, el.unit, el.ingredient);
+    listView.renderItem(item);
+  });
+}
+/****************************** List(shopping)コントローラ ******************************/
+
+// ショッピングリスト関連のイベントリスナ
+elements.shopping.addEventListener('click', e => {
+  const id = e.target.closest('.shopping__item').dataset.itemid;
+  if(e.target.matches('.shopping__delete, .shopping__delete *')) {
+    state.list.deleteItem(id); //配列からデータ削除
+    listView.deleteItem(id); // UI削除
+  } else if(e.target.matches('.shopping__count-value')) {
+    const val = parseFloat(e.target.value, 10);
+    state.list.updateCount(id, val); //材料の量を更新
+  }
+});
 
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe)); //urlの#recipe_idが変化した時, 画面をロードした時にrecipe_idを取得するイベントリスナ
 
@@ -82,10 +110,12 @@ elements.recipe.addEventListener('click', e => {
       state.recipe.updateServings('dec');
       recipeView.updateServingsIngredients(state.recipe); // 材料を再レンダリング
     }
-  } else if(e.target.matches('.btn-increase, .btn-increase *')){
+  } else if(e.target.matches('.btn-increase, .btn-increase *')) {
     state.recipe.updateServings('inc');
     recipeView.updateServingsIngredients(state.recipe); // 材料を再レンダリング
+  } else if(e.target.matches('.recipe__btn--add, .recipe__btn--add *')) { // add to shopping listをクリックした際の処理
+    controlList(); // 右側のshoppingリストを更新
   }
-  console.log(state.recipe);
 });
-/****************************** Recipeコントローラ ******************************/
+
+
