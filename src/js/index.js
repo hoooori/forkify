@@ -5,6 +5,7 @@ import Likes  from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView   from './views/listView';
+import * as likesView  from './views/likesView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
 const state = {};
@@ -70,7 +71,10 @@ const controlRecipe = async() => {
       state.recipe.calcTime(); // 調理時間を算出
       state.recipe.calcServings(); // 材料の分量を算出
       clearLoader(); // ローディングアイコン非表示
-      recipeView.renderRecipe(state.recipe); // レシピの詳細を表示
+      recipeView.renderRecipe( // レシピの詳細を表示(likeに関する情報も渡す)
+        state.recipe,
+        state.likes.isLiked(id)
+      );
     } catch(error) {
       alert(error);
       throw new Error(error);
@@ -91,29 +95,39 @@ const controlList = () => {
 /****************************** List(shopping)コントローラ ******************************/
 
 
-
 /****************************** Likeコントローラ ******************************/
 const controlLike = () => {
   if(!state.likes) state.likes = new Likes();
   const currentID = state.recipe.id;
 
   if(!state.likes.isLiked(currentID)) { // user has not yet liked current recipe
-    const newLike = state.likes.addLike(
+    const newLike = state.likes.addLike( // add like to the state
       currentID,
       state.recipe.title,
       state.recipe.author,
       state.recipe.img
     );
 
-    console.log(state.likes);
+    likesView.toggleLikeBtn(true); // toggle the like button
+    likesView.renderLike(newLike); // add like to ui list
   } else { // user has liked current recipe
-    state.likes.deleteLike(currentID);
-
-    console.log(state.likes);
+    state.likes.deleteLike(currentID); // remove like from the state
+    likesView.toggleLikeBtn(false); // toggle the like button
+    likesView.deleteLike(currentID); // remove like from ui list
   }
+  likesView.toggleLikeMenu(state.likes.getNumLikes());
 };
 /****************************** Likeコントローラ ******************************/
 
+
+
+// Restore liked recipes on page load
+window.addEventListener('load', () => {
+  state.likes = new Likes();
+  state.likes.readStorage(); // ローカルストレージの読み込み
+  likesView.toggleLikeMenu(state.likes.getNumLikes()); // likeメニュを表示・非表示にする
+  state.likes.likes.forEach(like => likesView.renderLike(like)); // 既存のlikeをレンダリング
+});
 
 
 // ショッピングリスト関連のイベントリスナ

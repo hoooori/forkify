@@ -5,7 +5,9 @@ export const elements = {
   searchResultList:  document.querySelector('.results__list'), // 検索結果
   searchResultPages: document.querySelector('.results__pages'), // ページネーション
   recipe:            document.querySelector('.recipe'), // レシピ詳細画面のローディングアイコン
-  shopping:          document.querySelector('.shopping__list') // ショッピングリスト
+  shopping:          document.querySelector('.shopping__list'), // ショッピングリスト
+  likesMenu:         document.querySelector('.likes__field'), // likesメニュー(右上)
+  likesList:         document.querySelector('.likes__list') //likesリスト
 };
 
 export const elementStrings = {
