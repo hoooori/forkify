@@ -1,6 +1,7 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List   from './models/List';
+import Likes  from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView   from './views/listView';
@@ -89,6 +90,32 @@ const controlList = () => {
 }
 /****************************** List(shopping)コントローラ ******************************/
 
+
+
+/****************************** Likeコントローラ ******************************/
+const controlLike = () => {
+  if(!state.likes) state.likes = new Likes();
+  const currentID = state.recipe.id;
+
+  if(!state.likes.isLiked(currentID)) { // user has not yet liked current recipe
+    const newLike = state.likes.addLike(
+      currentID,
+      state.recipe.title,
+      state.recipe.author,
+      state.recipe.img
+    );
+
+    console.log(state.likes);
+  } else { // user has liked current recipe
+    state.likes.deleteLike(currentID);
+
+    console.log(state.likes);
+  }
+};
+/****************************** Likeコントローラ ******************************/
+
+
+
 // ショッピングリスト関連のイベントリスナ
 elements.shopping.addEventListener('click', e => {
   const id = e.target.closest('.shopping__item').dataset.itemid;
@@ -115,6 +142,8 @@ elements.recipe.addEventListener('click', e => {
     recipeView.updateServingsIngredients(state.recipe); // 材料を再レンダリング
   } else if(e.target.matches('.recipe__btn--add, .recipe__btn--add *')) { // add to shopping listをクリックした際の処理
     controlList(); // 右側のshoppingリストを更新
+  } else if(e.target.matches('.recipe__love, .recipe__love *')){ // likeボタンをクリックした際の処理
+    controlLike();
   }
 });
 
